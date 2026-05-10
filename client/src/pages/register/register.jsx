@@ -1,16 +1,52 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, User, Phone, MapPin, Globe, Camera } from 'lucide-react';
+import api from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Register() {
   const [showPassword, setShowPassword] = useState(false);
-  const [password, setPassword] = useState('');
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    city: '',
+    country: '',
+    bio: '',
+    password: '',
+    confirmPassword: ''
+  });
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match");
+      return;
+    }
+    
+    try {
+      const response = await api.post('/auth/register', formData);
+      console.log('Registration successful:', response.data);
+      login(response.data.user, response.data.token);
+      navigate('/trips');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Registration failed');
+    }
+  };
 
   const getPasswordStrength = () => {
-    if (password.length === 0) return 0;
-    if (password.length < 6) return 1;
-    if (password.length < 10) return 2;
+    if (formData.password.length === 0) return 0;
+    if (formData.password.length < 6) return 1;
+    if (formData.password.length < 10) return 2;
     return 3;
   };
 
@@ -33,7 +69,8 @@ export default function Register() {
           <p className="text-slate-400">Join Traveloop and start planning your next adventure today.</p>
         </div>
 
-        <form className="relative z-10 space-y-6" onSubmit={(e) => e.preventDefault()}>
+        <form className="relative z-10 space-y-6" onSubmit={handleRegister}>
+          {error && <div className="p-3 text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl text-center">{error}</div>}
           {/* Profile Image Upload */}
           <div className="flex justify-center mb-8">
             <div className="relative">
@@ -54,7 +91,7 @@ export default function Register() {
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                   <User size={18} />
                 </div>
-                <input type="text" className="glass-input pl-11" placeholder="John" required />
+                <input name="firstName" value={formData.firstName} onChange={handleChange} type="text" className="glass-input pl-11" placeholder="John" required />
               </div>
             </div>
             <div className="space-y-1">
@@ -63,7 +100,7 @@ export default function Register() {
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                   <User size={18} />
                 </div>
-                <input type="text" className="glass-input pl-11" placeholder="Doe" required />
+                <input name="lastName" value={formData.lastName} onChange={handleChange} type="text" className="glass-input pl-11" placeholder="Doe" required />
               </div>
             </div>
 
@@ -73,7 +110,7 @@ export default function Register() {
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                   <Mail size={18} />
                 </div>
-                <input type="email" className="glass-input pl-11" placeholder="john@example.com" required />
+                <input name="email" value={formData.email} onChange={handleChange} type="email" className="glass-input pl-11" placeholder="john@example.com" required />
               </div>
             </div>
             <div className="space-y-1">
@@ -82,7 +119,7 @@ export default function Register() {
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                   <Phone size={18} />
                 </div>
-                <input type="tel" className="glass-input pl-11" placeholder="+1 (555) 000-0000" />
+                <input name="phone" value={formData.phone} onChange={handleChange} type="tel" className="glass-input pl-11" placeholder="+1 (555) 000-0000" />
               </div>
             </div>
 
@@ -92,7 +129,7 @@ export default function Register() {
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                   <MapPin size={18} />
                 </div>
-                <input type="text" className="glass-input pl-11" placeholder="New York" />
+                <input name="city" value={formData.city} onChange={handleChange} type="text" className="glass-input pl-11" placeholder="New York" />
               </div>
             </div>
             <div className="space-y-1">
@@ -101,13 +138,16 @@ export default function Register() {
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                   <Globe size={18} />
                 </div>
-                <input type="text" className="glass-input pl-11" placeholder="United States" />
+                <input name="country" value={formData.country} onChange={handleChange} type="text" className="glass-input pl-11" placeholder="United States" />
               </div>
             </div>
 
             <div className="space-y-1 md:col-span-2">
               <label className="text-sm font-medium text-slate-300 ml-1">Bio / Travel Interests (Optional)</label>
               <textarea 
+                name="bio"
+                value={formData.bio}
+                onChange={handleChange}
                 className="glass-input min-h-[100px] py-3 resize-none" 
                 placeholder="I love hiking and exploring new cultures..."
               ></textarea>
@@ -119,14 +159,15 @@ export default function Register() {
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                   <Lock size={18} />
                 </div>
-                <input 
-                  type={showPassword ? "text" : "password"} 
-                  className="glass-input pl-11 pr-11" 
-                  placeholder="••••••••" 
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
+                  <input 
+                    name="password"
+                    type={showPassword ? "text" : "password"} 
+                    className="glass-input pl-11 pr-11" 
+                    placeholder="••••••••" 
+                    value={formData.password}
+                    onChange={handleChange}
+                    required
+                  />
                 <button 
                   type="button"
                   className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-300"
@@ -150,12 +191,15 @@ export default function Register() {
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                   <Lock size={18} />
                 </div>
-                <input 
-                  type={showPassword ? "text" : "password"} 
-                  className="glass-input pl-11 pr-11" 
-                  placeholder="••••••••" 
-                  required
-                />
+                  <input 
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    type={showPassword ? "text" : "password"} 
+                    className="glass-input pl-11 pr-11" 
+                    placeholder="••••••••" 
+                    required
+                  />
               </div>
             </div>
           </div>

@@ -1,8 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Map, Plane, Star, Award, Edit3, Settings, MapPin, Calendar, Heart } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import api from '../../services/api';
+import { Link } from 'react-router-dom';
 
 export default function Profile() {
+  const { user } = useAuth();
+  const [trips, setTrips] = useState([]);
+  const [bookings, setBookings] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [tripsRes, bookingsRes] = await Promise.all([
+          api.get('/trips'),
+          api.get('/bookings')
+        ]);
+        setTrips(tripsRes.data);
+        setBookings(bookingsRes.data);
+      } catch (err) {
+        console.error('Failed to fetch profile data', err);
+      }
+    };
+    fetchData();
+  }, []);
+
   return (
     <div className="min-h-screen pt-24 pb-12 px-4 max-w-5xl mx-auto">
       {/* Profile Header */}
@@ -14,13 +37,13 @@ export default function Profile() {
         
         <div className="px-8 pb-8">
           <div className="flex flex-col md:flex-row gap-6 items-start md:items-end -mt-16 relative z-10">
-            <div className="w-32 h-32 rounded-full border-4 border-slate-900 bg-slate-800 overflow-hidden shadow-2xl">
-              <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop" alt="Profile" className="w-full h-full object-cover" />
+            <div className="w-32 h-32 rounded-full border-4 border-slate-900 bg-slate-800 overflow-hidden shadow-2xl flex items-center justify-center text-4xl font-bold text-white uppercase">
+              {user?.firstName?.[0] || 'U'}
             </div>
             <div className="flex-1 mb-2">
-              <h1 className="text-3xl font-bold text-white">Sarah Jenkins</h1>
+              <h1 className="text-3xl font-bold text-white">{user?.firstName || 'User'} {user?.lastName || ''}</h1>
               <p className="text-slate-400 flex items-center gap-2 mt-1">
-                <MapPin size={16} /> San Francisco, CA • Member since 2024
+                <MapPin size={16} /> {user?.city || 'Planet Earth'} • Member since 2024
               </p>
             </div>
             <div className="flex gap-3 w-full md:w-auto">
@@ -44,13 +67,13 @@ export default function Profile() {
             <div className="grid grid-cols-2 gap-4">
               <div className="bg-slate-800/50 rounded-xl p-4 text-center border border-slate-700/50">
                 <div className="text-accent-cyan mb-2 flex justify-center"><Map size={24} /></div>
-                <div className="text-2xl font-bold text-white mb-1">12</div>
-                <div className="text-xs text-slate-400 uppercase tracking-wider">Countries</div>
+                <div className="text-2xl font-bold text-white mb-1">{trips.length}</div>
+                <div className="text-xs text-slate-400 uppercase tracking-wider">Trips</div>
               </div>
               <div className="bg-slate-800/50 rounded-xl p-4 text-center border border-slate-700/50">
                 <div className="text-accent-purple mb-2 flex justify-center"><Plane size={24} /></div>
-                <div className="text-2xl font-bold text-white mb-1">34</div>
-                <div className="text-xs text-slate-400 uppercase tracking-wider">Cities</div>
+                <div className="text-2xl font-bold text-white mb-1">{bookings.length}</div>
+                <div className="text-xs text-slate-400 uppercase tracking-wider">Bookings</div>
               </div>
               <div className="bg-slate-800/50 rounded-xl p-4 text-center border border-slate-700/50">
                 <div className="text-primary-blue mb-2 flex justify-center"><Star size={24} /></div>
@@ -110,21 +133,29 @@ export default function Profile() {
           <div className="glass-card p-6">
             <h2 className="text-xl font-bold text-white mb-6">Recent Trips</h2>
             <div className="space-y-4">
-              {[
-                { name: 'Swiss Alps Hiking', date: 'Mar 2026', img: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=2070&auto=format&fit=crop' },
-                { name: 'Rome Weekend', date: 'Jan 2026', img: 'https://images.unsplash.com/photo-1552832230-c0197dd311b5?q=80&w=1996&auto=format&fit=crop' }
-              ].map((trip, idx) => (
-                <div key={idx} className="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-800/50 transition-colors cursor-pointer border border-transparent hover:border-slate-700">
-                  <img src={trip.img} className="w-16 h-16 rounded-lg object-cover" alt={trip.name} />
-                  <div className="flex-1">
-                    <h3 className="font-bold text-white">{trip.name}</h3>
-                    <p className="text-sm text-slate-400 flex items-center gap-1 mt-1"><Calendar size={12} /> {trip.date}</p>
-                  </div>
-                  <button className="text-accent-cyan text-sm font-medium hover:text-white transition-colors mr-2">
-                    View
-                  </button>
+              {trips.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-slate-400 mb-4">No trips yet. Start planning!</p>
+                  <Link to="/create-trip" className="btn-primary py-2 px-4 text-sm">Create Trip</Link>
                 </div>
-              ))}
+              ) : (
+                trips.slice(0, 5).map((trip, idx) => (
+                  <div key={trip._id || idx} className="flex items-center gap-4 p-3 rounded-xl hover:bg-slate-800/50 transition-colors cursor-pointer border border-transparent hover:border-slate-700">
+                    <div className="w-16 h-16 rounded-lg bg-gradient-to-br from-primary-blue to-accent-cyan flex items-center justify-center text-white font-bold text-lg shrink-0">
+                      {trip.destination?.[0]?.toUpperCase() || 'T'}
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-bold text-white">{trip.tripName}</h3>
+                      <p className="text-sm text-slate-400 flex items-center gap-1 mt-1">
+                        <MapPin size={12} /> {trip.destination}
+                      </p>
+                    </div>
+                    <Link to="/build-itinerary" className="text-accent-cyan text-sm font-medium hover:text-white transition-colors mr-2">
+                      View
+                    </Link>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         </div>

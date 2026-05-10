@@ -165,7 +165,7 @@ function DestinationCard({ dest }) {
         </div>
         <p className="text-slate-300 text-sm mb-4 line-clamp-2">{dest.desc}</p>
         <div className="flex justify-between items-center opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
-          <span className="text-white font-medium">From ${dest.price}</span>
+          <span className="text-white font-medium">From ₹{dest.price}</span>
           <button className="text-sm bg-white/20 hover:bg-white/30 backdrop-blur-md px-4 py-2 rounded-lg text-white transition-colors">
             Explore
           </button>
@@ -177,32 +177,32 @@ function DestinationCard({ dest }) {
 
 const trendingDestinations = [
   {
-    name: 'Kyoto, Japan',
-    desc: 'Ancient temples, beautiful gardens, and traditional tea houses.',
+    name: 'Manali, Himachal',
+    desc: 'Snow-capped mountains, adventure sports, and serene valleys.',
     rating: '4.9',
-    price: '1,200',
-    img: 'https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?q=80&w=2070&auto=format&fit=crop'
+    price: '8,500',
+    img: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?q=80&w=2070&auto=format&fit=crop'
   },
   {
-    name: 'Santorini, Greece',
-    desc: 'Iconic white and blue architecture with stunning sunset views.',
+    name: 'Goa',
+    desc: 'Beautiful beaches, vibrant nightlife, and Portuguese heritage.',
     rating: '4.8',
-    price: '1,500',
-    img: 'https://images.unsplash.com/photo-1613395877344-13d4a8e0d49e?q=80&w=2070&auto=format&fit=crop'
+    price: '6,200',
+    img: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?q=80&w=2074&auto=format&fit=crop'
   },
   {
-    name: 'Bali, Indonesia',
-    desc: 'Lush landscapes, vibrant culture, and beautiful beaches.',
+    name: 'Jaipur, Rajasthan',
+    desc: 'Majestic forts, royal palaces, and rich Rajasthani culture.',
     rating: '4.7',
-    price: '850',
-    img: 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?q=80&w=1938&auto=format&fit=crop'
+    price: '5,500',
+    img: 'https://images.unsplash.com/photo-1599661046289-e31897846e41?q=80&w=2070&auto=format&fit=crop'
   },
   {
-    name: 'Swiss Alps',
-    desc: 'Majestic mountains, skiing, and cozy alpine villages.',
+    name: 'Kerala Backwaters',
+    desc: 'Houseboats, lush greenery, and tranquil backwater cruises.',
     rating: '4.9',
-    price: '2,100',
-    img: 'https://images.unsplash.com/photo-1530122037265-a5f1f91d3b99?q=80&w=2070&auto=format&fit=crop'
+    price: '9,800',
+    img: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=2070&auto=format&fit=crop'
   }
 ];
 

@@ -65,7 +65,7 @@ export default function AdminAnalytics() {
           {/* KPI Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {[
-              { title: 'Total Revenue', value: '$45,231.89', change: '+20.1%', positive: true, icon: DollarSign, color: 'text-accent-emerald' },
+              { title: 'Total Revenue', value: '₹4,52,319', change: '+20.1%', positive: true, icon: DollarSign, color: 'text-accent-emerald' },
               { title: 'Active Users', value: '2,405', change: '+15.2%', positive: true, icon: Users, color: 'text-primary-blue' },
               { title: 'New Bookings', value: '1,234', change: '+4.5%', positive: true, icon: Calendar, color: 'text-accent-purple' },
               { title: 'Bounce Rate', value: '24.5%', change: '-2.4%', positive: true, icon: Activity, color: 'text-accent-cyan' }
@@ -119,10 +119,10 @@ export default function AdminAnalytics() {
               <h3 className="text-lg font-bold text-white mb-6">Recent Bookings</h3>
               <div className="space-y-6 flex-1">
                 {[
-                  { user: 'Olivia Martin', action: 'Booked a trip to Paris', time: 'Just now', amount: '$1,999.00' },
-                  { user: 'Jackson Lee', action: 'Cancelled Tokyo tour', time: '2h ago', amount: '-$450.00' },
-                  { user: 'Isabella Nguyen', action: 'Booked a luxury resort', time: '5h ago', amount: '$3,200.00' },
-                  { user: 'William Chen', action: 'Upgraded flight seat', time: '12h ago', amount: '$250.00' }
+                  { user: 'Priya Sharma', action: 'Booked a trip to Goa', time: 'Just now', amount: '₹12,500' },
+                  { user: 'Rahul Patel', action: 'Cancelled Manali tour', time: '2h ago', amount: '-₹4,500' },
+                  { user: 'Ananya Gupta', action: 'Booked Kerala houseboat', time: '5h ago', amount: '₹18,200' },
+                  { user: 'Vikram Singh', action: 'Upgraded hotel room', time: '12h ago', amount: '₹3,500' }
                 ].map((item, i) => (
                   <div key={i} className="flex items-start justify-between">
                     <div className="flex items-start gap-3">

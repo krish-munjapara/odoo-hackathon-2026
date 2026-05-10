@@ -16,32 +16,48 @@ import Booking from './pages/booking/booking';
 import AdminAnalytics from './pages/admin-analytics/admin-analytics';
 import TripNotes from './pages/trip-notes/trip-notes';
 import Invoice from './pages/invoice/invoice';
+import DestinationDetail from './pages/destination-detail/destination-detail';
 
 // Layout
 import Layout from './components/Layout';
 
+import { AuthProvider, useAuth } from './context/AuthContext';
+import { Navigate } from 'react-router-dom';
+
+const ProtectedRoute = ({ children }) => {
+  const { user, loading } = useAuth();
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-white text-xl">Loading...</div>;
+  if (!user) return <Navigate to="/login" />;
+  return children;
+};
+
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/create-trip" element={<CreateTrip />} />
-          <Route path="/build-itinerary" element={<BuildItinerary />} />
-          <Route path="/trips" element={<TripList />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/activities" element={<ActivitySearch />} />
-          <Route path="/itinerary" element={<ItineraryView />} />
-          <Route path="/community" element={<Community />} />
-          <Route path="/booking" element={<Booking />} />
-          <Route path="/admin" element={<AdminAnalytics />} />
-          <Route path="/notes" element={<TripNotes />} />
-          <Route path="/invoice" element={<Invoice />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            
+            {/* Protected Routes */}
+            <Route path="/create-trip" element={<ProtectedRoute><CreateTrip /></ProtectedRoute>} />
+            <Route path="/build-itinerary" element={<ProtectedRoute><BuildItinerary /></ProtectedRoute>} />
+            <Route path="/trips" element={<ProtectedRoute><TripList /></ProtectedRoute>} />
+            <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+            <Route path="/activities" element={<ActivitySearch />} />
+            <Route path="/destination/:id" element={<DestinationDetail />} />
+            <Route path="/itinerary" element={<ProtectedRoute><ItineraryView /></ProtectedRoute>} />
+            <Route path="/community" element={<ProtectedRoute><Community /></ProtectedRoute>} />
+            <Route path="/booking" element={<ProtectedRoute><Booking /></ProtectedRoute>} />
+            <Route path="/admin" element={<ProtectedRoute><AdminAnalytics /></ProtectedRoute>} />
+            <Route path="/notes" element={<ProtectedRoute><TripNotes /></ProtectedRoute>} />
+            <Route path="/invoice" element={<ProtectedRoute><Invoice /></ProtectedRoute>} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   );
 }
 

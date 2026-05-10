@@ -6,25 +6,25 @@ export default function BuildItinerary() {
   const [days, setDays] = useState([
     {
       id: 1,
-      date: 'Day 1 - Jul 15',
-      budget: '150',
+      date: 'Day 1 - Dec 20',
+      budget: '4,500',
       expanded: true,
       activities: [
-        { id: 'a1', time: '09:00 AM', title: 'Arrival at NRT Airport', location: 'Narita, Tokyo', type: 'transport', cost: '30' },
-        { id: 'a2', time: '12:30 PM', title: 'Check-in at Shinjuku Prince Hotel', location: 'Shinjuku', type: 'accommodation', cost: '0' },
-        { id: 'a3', time: '03:00 PM', title: 'Explore Shinjuku Gyoen National Garden', location: 'Shinjuku', type: 'activity', cost: '5' },
-        { id: 'a4', time: '07:00 PM', title: 'Dinner at Omoide Yokocho', location: 'Shinjuku', type: 'food', cost: '45' }
+        { id: 'a1', time: '09:00 AM', title: 'Arrival at Jaipur Airport', location: 'Sanganer, Jaipur', type: 'transport', cost: '800' },
+        { id: 'a2', time: '12:30 PM', title: 'Check-in at Hotel Rajputana', location: 'MI Road', type: 'accommodation', cost: '0' },
+        { id: 'a3', time: '03:00 PM', title: 'Hawa Mahal & Jantar Mantar Visit', location: 'Old City', type: 'activity', cost: '500' },
+        { id: 'a4', time: '07:00 PM', title: 'Dinner at Chokhi Dhani', location: 'Tonk Road', type: 'food', cost: '1,200' }
       ]
     },
     {
       id: 2,
-      date: 'Day 2 - Jul 16',
-      budget: '120',
+      date: 'Day 2 - Dec 21',
+      budget: '3,800',
       expanded: true,
       activities: [
-        { id: 'a5', time: '09:00 AM', title: 'Meiji Jingu Shrine', location: 'Shibuya', type: 'activity', cost: '0' },
-        { id: 'a6', time: '11:30 AM', title: 'Harajuku & Takeshita Street', location: 'Harajuku', type: 'activity', cost: '20' },
-        { id: 'a7', time: '02:00 PM', title: 'Shibuya Crossing & Hachiko', location: 'Shibuya', type: 'activity', cost: '0' }
+        { id: 'a5', time: '09:00 AM', title: 'Amer Fort & Sheesh Mahal', location: 'Amer', type: 'activity', cost: '1,000' },
+        { id: 'a6', time: '11:30 AM', title: 'Jal Mahal Photography', location: 'Man Sagar Lake', type: 'activity', cost: '0' },
+        { id: 'a7', time: '02:00 PM', title: 'City Palace Museum', location: 'Old City', type: 'activity', cost: '700' }
       ]
     }
   ]);
@@ -39,8 +39,8 @@ export default function BuildItinerary() {
       <div className="flex-1 space-y-6">
         <div className="flex justify-between items-center mb-8 glass-card p-6 rounded-2xl border-primary-blue/30 bg-primary-blue/5">
           <div>
-            <h1 className="text-3xl font-bold text-white mb-2">Tokyo Adventure</h1>
-            <p className="text-slate-400">7 Days • Jul 15 - Jul 21 • 2 Travelers</p>
+            <h1 className="text-3xl font-bold text-white mb-2">Jaipur Heritage Trip</h1>
+            <p className="text-slate-400">7 Days • Dec 20 - Dec 26 • 2 Travelers</p>
           </div>
           <div className="flex gap-3">
             <button className="btn-secondary py-2 px-4">Share</button>
@@ -61,7 +61,7 @@ export default function BuildItinerary() {
                   </div>
                   <div>
                     <h2 className="text-lg font-bold text-white">{day.date}</h2>
-                    <p className="text-sm text-slate-400">Budget: ${day.budget}</p>
+                    <p className="text-sm text-slate-400">Budget: ₹{day.budget}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -144,26 +144,26 @@ export default function BuildItinerary() {
             <div className="absolute inset-0 rounded-full border-8 border-slate-800"></div>
             <div className="absolute inset-0 rounded-full border-8 border-accent-emerald border-t-transparent border-r-transparent transform rotate-45"></div>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-2xl font-bold text-white">$270</span>
-              <span className="text-xs text-slate-400">of $1,500</span>
+              <span className="text-2xl font-bold text-white">₹8,300</span>
+              <span className="text-xs text-slate-400">of ₹25,000</span>
             </div>
           </div>
           <div className="space-y-3">
             <div className="flex justify-between text-sm">
               <span className="text-slate-400">Accommodation</span>
-              <span className="text-white">$0</span>
+              <span className="text-white">₹0</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-slate-400">Transport</span>
-              <span className="text-white">$30</span>
+              <span className="text-white">₹800</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-slate-400">Food</span>
-              <span className="text-white">$45</span>
+              <span className="text-white">₹1,200</span>
             </div>
             <div className="flex justify-between text-sm">
               <span className="text-slate-400">Activities</span>
-              <span className="text-white">$25</span>
+              <span className="text-white">₹500</span>
             </div>
           </div>
         </div>

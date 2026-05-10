@@ -1,10 +1,18 @@
 import React from 'react';
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plane, User, Map, Compass, BookOpen, FileText } from 'lucide-react';
+import { Plane, User, Map, Compass, BookOpen, FileText, LogOut } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 export default function Layout() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   // Don't show nav on auth pages or admin dashboard
   const hideNav = ['/login', '/register', '/admin', '/invoice'].includes(location.pathname);
@@ -23,16 +31,27 @@ export default function Layout() {
           <div className="hidden md:flex items-center gap-6">
             <NavLink to="/" icon={<Compass size={18} />} text="Explore" />
             <NavLink to="/trips" icon={<Map size={18} />} text="My Trips" />
-            <NavLink to="/community" icon={<BookOpen size={18} />} text="Community" />
-            <NavLink to="/admin" icon={<FileText size={18} />} text="Admin" />
+            <NavLink to="/notes" icon={<FileText size={18} />} text="Notes" />
+            <NavLink to="/booking" icon={<BookOpen size={18} />} text="Booking" />
           </div>
 
           <div className="flex items-center gap-4">
-            <Link to="/login" className="text-slate-300 hover:text-white transition-colors font-medium">Log In</Link>
-            <Link to="/register" className="btn-primary py-2 px-4 rounded-lg text-sm">Sign Up</Link>
-            <Link to="/profile" className="w-10 h-10 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-300 hover:border-accent-cyan transition-all">
-              <User size={20} />
-            </Link>
+            {user ? (
+              <>
+                <span className="text-slate-300 text-sm hidden md:inline">Hi, {user.firstName}</span>
+                <Link to="/profile" className="w-10 h-10 rounded-full bg-gradient-to-br from-primary-blue to-accent-cyan flex items-center justify-center text-white font-bold uppercase">
+                  {user.firstName?.[0] || 'U'}
+                </Link>
+                <button onClick={handleLogout} className="text-slate-400 hover:text-red-400 transition-colors" title="Logout">
+                  <LogOut size={20} />
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/login" className="text-slate-300 hover:text-white transition-colors font-medium">Log In</Link>
+                <Link to="/register" className="btn-primary py-2 px-4 rounded-lg text-sm">Sign Up</Link>
+              </>
+            )}
           </div>
         </nav>
       )}

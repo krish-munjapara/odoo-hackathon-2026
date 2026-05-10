@@ -1,9 +1,41 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Calendar, Users, Wallet, Sparkles, Navigation, Globe, Plus } from 'lucide-react';
+import api from '../../services/api';
+import { useNavigate } from 'react-router-dom';
 
 export default function CreateTrip() {
   const [step, setStep] = useState(1);
+  const [formData, setFormData] = useState({
+    tripName: '',
+    destination: '',
+    startDate: '',
+    endDate: '',
+    travelStyle: '',
+    companions: 'solo',
+    budgetLevel: 'budget'
+  });
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleStyleChange = (style) => {
+    setFormData({ ...formData, travelStyle: style });
+  };
+
+  const handleCreateTrip = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post('/trips', formData);
+      console.log('Trip created successfully:', response.data);
+      navigate('/trips');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to create trip');
+    }
+  };
 
   return (
     <div className="min-h-screen pt-24 pb-12 px-4 max-w-7xl mx-auto">
@@ -27,17 +59,18 @@ export default function CreateTrip() {
               </div>
             </div>
 
-            <form className="space-y-6" onSubmit={e => e.preventDefault()}>
+            <form className="space-y-6" onSubmit={handleCreateTrip}>
+              {error && <div className="p-3 text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl text-center">{error}</div>}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-300">Trip Name</label>
-                <input type="text" className="glass-input text-lg" placeholder="e.g. Summer in Tokyo" />
+                <input name="tripName" value={formData.tripName} onChange={handleChange} type="text" className="glass-input text-lg" placeholder="e.g. Summer in Tokyo" required />
               </div>
 
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-300">Destination</label>
                 <div className="relative">
                   <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                  <input type="text" className="glass-input pl-12" placeholder="Where are you going?" />
+                  <input name="destination" value={formData.destination} onChange={handleChange} type="text" className="glass-input pl-12" placeholder="Where are you going?" required />
                 </div>
               </div>
 
@@ -46,14 +79,14 @@ export default function CreateTrip() {
                   <label className="text-sm font-medium text-slate-300">Start Date</label>
                   <div className="relative">
                     <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                    <input type="date" className="glass-input pl-12 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert" />
+                    <input name="startDate" value={formData.startDate} onChange={handleChange} type="date" className="glass-input pl-12 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert" required />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-slate-300">End Date</label>
                   <div className="relative">
                     <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                    <input type="date" className="glass-input pl-12 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert" />
+                    <input name="endDate" value={formData.endDate} onChange={handleChange} type="date" className="glass-input pl-12 [&::-webkit-calendar-picker-indicator]:filter [&::-webkit-calendar-picker-indicator]:invert" required />
                   </div>
                 </div>
               </div>
@@ -62,7 +95,12 @@ export default function CreateTrip() {
                 <label className="text-sm font-medium text-slate-300">Travel Style</label>
                 <div className="grid grid-cols-3 gap-3">
                   {['Relaxation', 'Adventure', 'Cultural', 'Nightlife', 'Nature', 'Food'].map((style, i) => (
-                    <button key={i} className={`p-3 rounded-xl border transition-all text-sm font-medium ${i === 1 ? 'bg-primary-blue/20 border-primary-blue text-white' : 'bg-slate-800/50 border-slate-700 text-slate-400 hover:bg-slate-700 hover:text-white'}`}>
+                    <button 
+                      type="button"
+                      key={i} 
+                      onClick={() => handleStyleChange(style)}
+                      className={`p-3 rounded-xl border transition-all text-sm font-medium ${formData.travelStyle === style ? 'bg-primary-blue/20 border-primary-blue text-white' : 'bg-slate-800/50 border-slate-700 text-slate-400 hover:bg-slate-700 hover:text-white'}`}
+                    >
                       {style}
                     </button>
                   ))}
@@ -74,7 +112,7 @@ export default function CreateTrip() {
                   <label className="text-sm font-medium text-slate-300">Companions</label>
                   <div className="relative">
                     <Users className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                    <select className="glass-input pl-12 appearance-none">
+                    <select name="companions" value={formData.companions} onChange={handleChange} className="glass-input pl-12 appearance-none">
                       <option value="solo" className="bg-slate-900">Solo</option>
                       <option value="couple" className="bg-slate-900">Couple</option>
                       <option value="family" className="bg-slate-900">Family</option>
@@ -86,10 +124,10 @@ export default function CreateTrip() {
                   <label className="text-sm font-medium text-slate-300">Budget Level</label>
                   <div className="relative">
                     <Wallet className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={20} />
-                    <select className="glass-input pl-12 appearance-none">
-                      <option value="budget" className="bg-slate-900">Budget ($)</option>
-                      <option value="moderate" className="bg-slate-900">Moderate ($$)</option>
-                      <option value="luxury" className="bg-slate-900">Luxury ($$$)</option>
+                    <select name="budgetLevel" value={formData.budgetLevel} onChange={handleChange} className="glass-input pl-12 appearance-none">
+                      <option value="budget" className="bg-slate-900">Budget (₹5K-15K)</option>
+                      <option value="moderate" className="bg-slate-900">Moderate (₹15K-40K)</option>
+                      <option value="luxury" className="bg-slate-900">Luxury (₹40K+)</option>
                     </select>
                   </div>
                 </div>
@@ -123,16 +161,16 @@ export default function CreateTrip() {
             
             <div className="space-y-4 mt-6">
               {[
-                { name: 'Mount Fuji Day Tour', type: 'Adventure', price: '120', img: 'https://images.unsplash.com/photo-1490806843957-31f4c9a91c65?q=80&w=2070&auto=format&fit=crop' },
-                { name: 'Traditional Tea Ceremony', type: 'Cultural', price: '45', img: 'https://images.unsplash.com/photo-1542051812871-758502109a18?q=80&w=2070&auto=format&fit=crop' },
-                { name: 'Sushi Making Class', type: 'Food', price: '85', img: 'https://images.unsplash.com/photo-1553621042-f6e147245754?q=80&w=1925&auto=format&fit=crop' }
+                { name: 'Taj Mahal Sunrise Tour', type: 'Cultural', price: '2,500', img: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?q=80&w=2070&auto=format&fit=crop' },
+                { name: 'Kerala Ayurveda Retreat', type: 'Relaxation', price: '4,500', img: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?q=80&w=2070&auto=format&fit=crop' },
+                { name: 'Rajasthani Cooking Class', type: 'Food', price: '1,800', img: 'https://images.unsplash.com/photo-1585937421612-70a008356fbe?q=80&w=2036&auto=format&fit=crop' }
               ].map((activity, idx) => (
                 <div key={idx} className="group glass-card overflow-hidden flex items-center gap-4 p-3 hover:bg-slate-800/80 transition-colors cursor-pointer">
                   <img src={activity.img} alt={activity.name} className="w-20 h-20 rounded-xl object-cover" />
                   <div className="flex-1">
                     <h4 className="font-bold text-white group-hover:text-accent-cyan transition-colors">{activity.name}</h4>
                     <p className="text-slate-400 text-sm">{activity.type}</p>
-                    <p className="text-white font-medium mt-1">${activity.price}</p>
+                    <p className="text-white font-medium mt-1">₹{activity.price}</p>
                   </div>
                   <button className="w-10 h-10 rounded-full bg-slate-800 text-slate-300 flex items-center justify-center group-hover:bg-accent-cyan group-hover:text-white transition-all mr-2">
                     <Plus size={20} />

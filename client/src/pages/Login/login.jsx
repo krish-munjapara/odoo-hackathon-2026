@@ -1,10 +1,29 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, Eye, EyeOff, ArrowRight, Globe, Smartphone, Plane } from 'lucide-react';
+import api from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post('/auth/login', { email, password });
+      console.log('Login successful:', response.data);
+      login(response.data.user, response.data.token);
+      navigate('/trips');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Login failed');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-mesh flex items-center justify-center p-4">
@@ -85,19 +104,22 @@ export default function Login() {
           <h2 className="text-3xl font-bold text-white mb-2">Welcome Back</h2>
           <p className="text-slate-400 mb-8">Enter your details to access your account.</p>
 
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-5" onSubmit={handleLogin}>
+            {error && <div className="p-3 text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl">{error}</div>}
             <div className="space-y-1">
               <label className="text-sm font-medium text-slate-300 ml-1">Email Address</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                   <Mail size={18} />
                 </div>
-                <input 
-                  type="email" 
-                  className="glass-input pl-11" 
-                  placeholder="name@example.com" 
-                  required
-                />
+                  <input 
+                    type="email" 
+                    className="glass-input pl-11" 
+                    placeholder="name@example.com" 
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
               </div>
             </div>
 
@@ -110,12 +132,14 @@ export default function Login() {
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-500">
                   <Lock size={18} />
                 </div>
-                <input 
-                  type={showPassword ? "text" : "password"} 
-                  className="glass-input pl-11 pr-11" 
-                  placeholder="••••••••" 
-                  required
-                />
+                  <input 
+                    type={showPassword ? "text" : "password"} 
+                    className="glass-input pl-11 pr-11" 
+                    placeholder="••••••••" 
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
                 <button 
                   type="button"
                   className="absolute inset-y-0 right-0 pr-4 flex items-center text-slate-500 hover:text-slate-300 transition-colors"
